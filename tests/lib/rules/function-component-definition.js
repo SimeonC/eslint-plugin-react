@@ -481,6 +481,56 @@ ruleTester.run('function-component-definition', rule, {
     },
     {
       code: `
+        let Hello = (props) => {
+          return <div/>;
+        }
+      `,
+      output: `
+        let Hello = function(props) {
+          return <div/>;
+        }
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
+    },
+    {
+      code: `
+        let Hello;
+        Hello = (props) => {
+          return <div/>;
+        }
+      `,
+      output: `
+        let Hello;
+        Hello = function(props) {
+          return <div/>;
+        }
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
+    },
+    {
+      code: `
+        let Hello = (props) => {
+          return <div/>;
+        }
+        Hello = function(props) {
+          return <span/>;
+        }
+      `,
+      output: `
+        let Hello = function(props) {
+          return <div/>;
+        }
+        Hello = function(props) {
+          return <span/>;
+        }
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
+    },
+    {
+      code: `
         function Hello(props) {
           return <div/>;
         }
@@ -618,6 +668,54 @@ ruleTester.run('function-component-definition', rule, {
       options: [{ namedComponents: 'function-expression' }],
       errors: [{ messageId: 'function-expression' }],
       features: ['types'],
+    },
+    {
+      code: `
+        import * as React from 'react';
+        function Hello(props: Test) {
+          return React.createElement('div');
+        }
+      `,
+      output: `
+        import * as React from 'react';
+        const Hello = function(props: Test) {
+          return React.createElement('div');
+        }
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
+      features: ['types'],
+    },
+    {
+      code: `
+        export function Hello(props: Test) {
+          return React.createElement('div');
+        }
+      `,
+      output: `
+        export const Hello = function(props: Test) {
+          return React.createElement('div');
+        }
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
+      features: ['types'],
+    },
+    {
+      code: `
+        function Hello(props) {
+          return React.createElement('div');
+        }
+        export default Hello;
+      `,
+      output: `
+        const Hello = function(props) {
+          return React.createElement('div');
+        }
+        export default Hello;
+      `,
+      options: [{ namedComponents: 'function-expression' }],
+      errors: [{ messageId: 'function-expression' }],
     },
     {
       code: `
